@@ -1,5 +1,5 @@
 # A simple example that does a HTTP fetch and retries a few times on failure.
-require "./lib/http"
+require "./lib/http" # implements the HTTP.get method
 require "./lib/try" # actually implements the begin/rescue/retry code.
 
 if ARGV.length != 1
@@ -8,7 +8,6 @@ if ARGV.length != 1
   exit 1
 end
 
-# This will fail because we're trying https on port 80.
 url = ARGV[0]
 
 response = try(5.times) do
