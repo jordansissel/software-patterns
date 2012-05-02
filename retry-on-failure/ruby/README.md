@@ -37,8 +37,8 @@ end
 
 ## Example Code
 
-* See `example.rb` for the user code.
-* See `lib/try.rb' for the 'try' implementation
+* See [`example.rb`](https://github.com/jordansissel/software-patterns/blob/master/retry-on-failure/ruby/example.rb) for the sample user code.
+* See [`lib/try.rb'](https://github.com/jordansissel/software-patterns/blob/master/retry-on-failure/ruby/lib/try.rb) for the 'try' implementation
 
 This 'try' implementation uses an enumerable instead of Numeric value to clue
 the number of attempts. This flows well:
