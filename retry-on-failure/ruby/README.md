@@ -10,9 +10,53 @@ Most errors in Ruby appear as exceptions, thus can be handled with 'rescue'. A
 begin/rescue block supports 'retry' which causes the begin block to be
 re-executed, kind of like a loop.
 
+## Example Code
+
+* See `example.rb` for the user code.
+* See `lib/try.rb' for the 'try' implementation
+
+This 'try' implementation uses an enumerable instead of Numeric value to clue
+the number of attempts. This flows well:
+
+## Specific Examples
+
+### Try a few times:
+```
+try(5.times) do
+  # some code
+end
+```
+
+### Pass the enumerable value in:
+```
+try(5.times) do |iteration|
+  puts "On try: #{iteration}"  # prints 'On try: 1', etc
+  # some code
+end
+```
+
+### Try forever until success
+
+```
+try do 
+  # code ...
+end
+```
+
 ## Example runs
 
-See `example.rb` for the code.
+### Fail forever
+
+```
+% ruby -r ./lib/try -e 'try { raise "Uh oh" } '
+Failed (Uh oh). Retrying in 0.01 seconds...
+Failed (Uh oh). Retrying in 0.02 seconds...
+Failed (Uh oh). Retrying in 0.04 seconds...
+Failed (Uh oh). Retrying in 0.08 seconds...
+Failed (Uh oh). Retrying in 0.16 seconds...
+(this continues forever)
+```
+
 
 ### Ran out of tries:
 
