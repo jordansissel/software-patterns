@@ -20,7 +20,19 @@ end
 ```
 
 However, when I started generalizing this solution, I found that using
-begin+rescue and an enumerable was a more flexible solution.
+begin+rescue and an enumerable was a more flexible solution, like so:
+
+```ruby
+trylist.each do
+  begin
+    # some code
+    break # if we get here, success!
+  rescue SomeException => e
+    last_exception = e
+  end
+  raise last_exception
+end
+```
 
 ## Example Code
 
