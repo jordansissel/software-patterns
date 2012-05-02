@@ -38,6 +38,8 @@ end
 ## Example Code
 
 * See [`example.rb`](https://github.com/jordansissel/software-patterns/blob/master/retry-on-failure/ruby/example.rb) for the sample user code.
+* See [`example-sequel.rb`](https://github.com/jordansissel/software-patterns/blob/master/retry-on-failure/ruby/example-sequel.rb)
+  for the sample Sequel code trying connections to a set of database hosts.
 * See [`lib/try.rb'](https://github.com/jordansissel/software-patterns/blob/master/retry-on-failure/ruby/lib/try.rb) for the 'try' implementation
 
 This 'try' implementation uses an enumerable instead of Numeric value to clue
@@ -59,7 +61,6 @@ try(5.times) do |iteration|
   # some code
 end
 ```
-
 ### Try forever until success
 
 ```
@@ -109,4 +110,18 @@ Response status: 200
 % ruby example.rb http://www.google.com/
 Failed (Simulated random failure). Retrying in 0.01 seconds...
 Response status: 200
+```
+
+### Try multiple databse hosts
+
+```
+% ruby example-sequel.rb
+Failed (PG::Error: could not translate host name "pg-replica-a" to address: Name or service not known
+). Retrying in 0.01 seconds...
+Failed (PG::Error: could not translate host name "pg-replica-b" to address: Name or service not known
+). Retrying in 0.02 seconds...
+Failed (PG::Error: could not translate host name "pg-replica-c" to address: Name or service not known
+). Retrying in 0.04 seconds...
+/home/jls/projects/software-patterns/retry-on-failure/ruby/lib/try.rb:75:in `try': PG::Error: could not translate host name "pg-replica-c" to address: Name or service not known (Sequel::DatabaseConnectionError)
+        from example-sequel.rb:7:in `<main>'
 ```
