@@ -4,18 +4,18 @@ require "./lib/try" # actually implements the begin/rescue/retry code.
 
 if ARGV.length != 1
   puts "Usage: #{$0} <url>"
+  puts "Example: #{$0} http://www.google.com/"
   exit 1
 end
 
 # This will fail because we're trying https on port 80.
 url = ARGV[0]
 
-response = try(20.times) { 
+response = try(5.times) do
   # Simulate failure 70% of the time.
-  raise HTTP::Error, "Random failure" if rand < 0.70
+  raise HTTP::Error, "Simulated random failure" if rand < 0.70
   HTTP.get(url) 
-}
+end
 
-puts "Response header:"
-puts response.to_s
+puts "Response status: #{response.status}"
 
