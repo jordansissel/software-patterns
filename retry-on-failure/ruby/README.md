@@ -112,16 +112,18 @@ Failed (Simulated random failure). Retrying in 0.01 seconds...
 Response status: 200
 ```
 
-### Try multiple databse hosts
+### Try multiple database hosts
+
+This one tries a shuffled list of database hosts.
 
 ```
 % ruby example-sequel.rb
-Failed (PG::Error: could not translate host name "pg-replica-a" to address: Name or service not known
-). Retrying in 0.01 seconds...
 Failed (PG::Error: could not translate host name "pg-replica-b" to address: Name or service not known
-). Retrying in 0.02 seconds...
+). Retrying in 0.01 seconds...
 Failed (PG::Error: could not translate host name "pg-replica-c" to address: Name or service not known
+). Retrying in 0.02 seconds...
+Failed (PG::Error: could not translate host name "pg-replica-a" to address: Name or service not known
 ). Retrying in 0.04 seconds...
-/home/jls/projects/software-patterns/retry-on-failure/ruby/lib/try.rb:75:in `try': PG::Error: could not translate host name "pg-replica-c" to address: Name or service not known (Sequel::DatabaseConnectionError)
-        from example-sequel.rb:7:in `<main>'
+/home/jls/projects/software-patterns/retry-on-failure/ruby/lib/try.rb:75:in `try': PG::Error: could not translate host name "pg-replica-a" to address: Name or service not known (Sequel::DatabaseConnectionError)
+        from example-sequel.rb:9:in `<main>'
 ```
