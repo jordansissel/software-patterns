@@ -4,11 +4,23 @@ Lots of functions fail nondeterministically; that is, they fail for reasons unre
 
 For example, a HTTP GET may fail because the server is down temporarily.
 
-## Implementing with begin/rescue/retry
+## Implementation options
 
 Most errors in Ruby appear as exceptions, thus can be handled with 'rescue'. A
 begin/rescue block supports 'retry' which causes the begin block to be
-re-executed, kind of like a loop.
+re-executed, kind of like a loop:
+
+```ruby
+begin
+  # some code that might fail
+rescue SomeException
+  tries -= 1
+  retry if tries > 0 # restarts the 'begin' block
+end
+```
+
+However, when I started generalizing this solution, I found that using
+begin+rescue and an enumerable was a more flexible solution.
 
 ## Example Code
 
