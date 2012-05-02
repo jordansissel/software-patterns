@@ -11,6 +11,7 @@ begin/rescue block supports 'retry' which causes the begin block to be
 re-executed, kind of like a loop:
 
 ```ruby
+tries = 10
 begin
   # some code that might fail
 rescue SomeException
@@ -23,7 +24,7 @@ However, when I started generalizing this solution, I found that using
 begin+rescue and an enumerable was a more flexible solution, like so:
 
 ```ruby
-trylist.each do
+10.times.each do
   begin
     # some code
     break # if we get here, success!
