@@ -20,6 +20,14 @@ rescue SomeException
 end
 ```
 
+You can also use the in-line rescue to retry forever, which is pretty awesome
+if you don't need to log the failure:
+
+```ruby
+# Retry this http fetch until it succeeds
+response = Net::HTTP.get_response("google.com", "/") rescue retry
+```
+
 However, when I started generalizing this solution, I found that using
 begin+rescue and an enumerable was a more flexible solution, like so:
 
