@@ -56,6 +56,8 @@ def try(enumerable=nil, &block)
   # reraise
   enumerable.each do |val|
     begin
+      # If the 'procedure' (the block, really) succeeds, we'll break 
+      # and return the return value of the block. Win!
       return procedure.call(val)
     rescue => e
       puts "Failed (#{e}). Retrying in #{backoff} seconds..."
