@@ -9,7 +9,9 @@ def slowquery(db)
   sleep 1
 end
 
-pool = Pool.new(5) # limit maximum of number resources in the pool.
+# limit maximum of number resources in the pool.
+# You can omit the size to make an infinite-sized pool.
+pool = Pool.new(5) 
 
 dburls = [ "sqlite://test1.db", "sqlite://test2.db", "sqlite://some/bad/path" ]
 
@@ -17,15 +19,21 @@ dburls = [ "sqlite://test1.db", "sqlite://test2.db", "sqlite://some/bad/path" ]
   # Get a database connection and make sure it works before continuing.
   begin
     # Fetch a resource from the pool. If nothing is available and the pool is
-    # not full, pick a random database URL and and use it.
+    # not full, pick a random database URL and and use it. Otherwise, this fetch
+    # call will block until the pool has an available resource.
     db = pool.fetch { Sequel.connect(dburls.shuffle.first) }
+
+    # Test the connection to verify it still works (see Sequel::Database#test_connection)
+    # If this fails, we'll catch the exception and remove this known-broken
+    # database connection from the pool.
     db.test_connection
   rescue Sequel::DatabaseConnectionError => e
     puts "Database failed (#{db.inspect}), but will try another. Error was: #{e.class}"
     #p :busy => pool.instance_eval { @busy }, :available => pool.instance_eval { @available }
     pool.remove(db)
 
-    # Ahh but we should be using the 'try' pattern, shouldn't we? ;)
+    # Now retry the fetch, which possibly will create a new database connection to replace
+    # the broken one we just removed.
     retry
   end
 
@@ -37,6 +45,6 @@ dburls = [ "sqlite://test1.db", "sqlite://test2.db", "sqlite://some/bad/path" ]
     pool.release(db)
   end
 
-  # Sleep a bit.
+  # Sleep a bit, pretending to do other work in the main thread here.
   sleep 0.1
 end
