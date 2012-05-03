@@ -1,7 +1,18 @@
 require "thread"
 
-# Public: A thread-safe resource pool.
+# Public: A thread-safe, generic resource pool.
 #
+# This class is agnostic as to the resources in the pool. You can put
+# database connections, sockets, threads, etc. It's up to you!
+#
+# Examples:
+#
+#     pool = Pool.new
+#     pool.add(Sequel.connect("postgres://pg-readonly-1/prod"))
+#     pool.add(Sequel.connect("postgres://pg-readonly-2/prod"))
+#     pool.add(Sequel.connect("postgres://pg-readonly-3/prod"))
+#
+#     pool.fetch # =>  Returns one of the Sequel::Database values from the pool
 class Pool
 
   class Error < StandardError; end
@@ -77,6 +88,14 @@ class Pool
 
   # Public: Fetch an available resource.
   #
+  # If no resource is available, and the pool is not full, the
+  # default_value_block will be called and the return value of it used as the
+  # resource.
+  #
+  # If no resource is availabe, and the pool is full, this call will block
+  # until a resource is available.
+  #
+  # Returns a resource ready to be used.
   def fetch(&default_value_block)
     @lock.synchronize do
       object_id, resource = @available.shift
