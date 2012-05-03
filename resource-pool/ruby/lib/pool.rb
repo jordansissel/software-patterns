@@ -42,6 +42,7 @@ class Pool
     # The pool lock
     @lock = Mutex.new
 
+    # Locks for blocking {#fetch} calls if the pool is full.
     @full_lock = Mutex.new
     @full_cv = ConditionVariable.new
 
@@ -114,6 +115,9 @@ class Pool
       end
     end
 
+    # TODO(sissel): If no block is given, we should block until a resource is
+    # available.
+
     # If we get here, no resource is available and the pool is not full.
     resource = default_value_block.call
     # Only add the resource if the default_value_block returned one.
@@ -136,11 +140,9 @@ class Pool
     # Find the object by object_id
     #p [:internal, :busy => @busy, :available => @available]
     @lock.synchronize do
-      #p resource.object_id => include?(resource)
       if available?(resource)
         raise InvalidAction, "This resource must be busy for you to remove it (ie; it must be fetched from the pool)"
       end
-
       @busy.delete(resource.object_id)
     end
   end # def remove
@@ -148,6 +150,8 @@ class Pool
   # Private: Verify this resource is in the pool.
   #
   # You *MUST* call this method only when you are holding @lock.
+  #
+  # Returns :available if it is available, :busy if busy, false if not in the pool.
   def include?(resource)
     if @available.include?(resource.object_id)
       return :available
@@ -158,8 +162,11 @@ class Pool
     end
   end # def include?
 
-  #
+  # Private: Is this resource available?
   # You *MUST* call this method only when you are holding @lock.
+  #
+  # Returns true if this resource is available in the pool.
+  # Raises NotFound if the resource given is not in the pool at all.
   def available?(resource)
     case include?(resource)
       when :available; return true
@@ -173,22 +180,18 @@ class Pool
   # You *MUST* call this method only when you are holding @lock.
   #
   # Returns true if this resource is busy.
+  # Raises NotFound if the resource given is not in the pool at all.
   def busy?(resource)
     return !available?(resource)
   end # def busy?
 
-  # Private: Mark this resource as in use
-  def mark(resource)
-    @lock.synchronize do
-      if !available?(resource)
-        raise ResourceBusy, "The resource is already busy (in use), cannot mark. Resource; #{resource.inspect}"
-      end
-
-      @available.delete(resource.object_id)
-      @busy[resource.object_id] = resource
-    end
-  end # def mark
-
+  # Public: Release this resource back to the pool.
+  #
+  # After you finish using a resource you received with {#fetch}, you must
+  # release it back to the pool using this method.
+  #
+  # Alternately, you can {#remove} it if you want to remove it from the pool
+  # instead of releasing it.
   def release(resource)
     @lock.synchronize do
       if !include?(resource)
