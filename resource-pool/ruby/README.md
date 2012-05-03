@@ -7,11 +7,24 @@ read-only database backends, etc.
 
 ## Implementation options
 
-TODO(sissel): To be written.
+Worker and Thread pool implementations are quite plentiful, and may suit your
+needs here. However, I'm looking specifically to solve a more general
+"resource" pool.
+
+The work flow I wanted here was:
+
+1. Get a resource from the pool
+  * if none available, create a new one or block until one is available
+2. Do something with this resource
+3. Release the resource back to the pool
+4. Remove bad resources (a database died, for example)
+
+With this flow, we can implement thread pools, workers, etc, but also implement
+connection pooling, etc.
 
 ## Example Code
 
-* See [`example.rb`](https://github.com/jordansissel/software-patterns/blob/master/resource-pool/ruby/example.rb) for the sample user code.
+* See [`example.rb`](https://github.com/jordansissel/software-patterns/blob/master/resource-pool/ruby/example.rb) for the sample user code which maintaines a pool of database connections.
 * See [`lib/pool.rb'](https://github.com/jordansissel/software-patterns/blob/master/resource-pool/ruby/lib/pool.rb) for the 'pool' implementation
 
 ## Specific Examples

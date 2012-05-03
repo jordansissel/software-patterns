@@ -13,6 +13,9 @@ end
 # You can omit the size to make an infinite-sized pool.
 pool = Pool.new(5) 
 
+# Use multiple database resources in the pool.
+# In this example, the 'some/bad/path' one should fail and help demonstrate
+# the removal of a 'bad' resource as well as retries on resource failures.
 dburls = [ "sqlite://test1.db", "sqlite://test2.db", "sqlite://some/bad/path" ]
 
 15.times do
