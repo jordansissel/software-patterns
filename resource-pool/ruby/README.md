@@ -2,14 +2,17 @@
 
 Frequently, you will have a dynamic set of resources that can answer requests.
 
-For example, multiple web servers that can answer the same query, or multiple
-read-only database backends, etc.
+For example:
+
+* maintaining a pool of HTTP connections (with keep-alive) open to backend
+  servers to reduce tcp/ssl handshake latency
+* keeping a pool of database connections to many read-only slaves
 
 ## Implementation options
 
-Worker and Thread pool implementations are quite plentiful, and may suit your
-needs here. However, I'm looking specifically to solve a more general
-"resource" pool.
+Worker and Thread pool implementations are quite common in many languages, and
+may suit your needs here. However, I'm looking specifically to solve a more
+general "resource" pool.
 
 The work flow I wanted here was:
 
