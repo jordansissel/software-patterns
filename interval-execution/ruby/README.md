@@ -102,3 +102,25 @@ is 1 second, but the execution takes 2.5 seconds, what do you do?
 
 The above implementation solves this by resetting the clock and skipping sleep
 for the next turn.
+
+## Conclusion
+
+Minimizing skew on interval executions is important for things like heartbeat
+and intervals in general.
+
+This is especially important on multitenant systems because your time
+constraints aren't as sharp. Here's what implementation #2 looks like on
+Heroku/EC2:
+
+```
+{:duration=>1.111534059, :skew=>0.009623941999999941, :count=>1, :avgskew=>0.009623941999999941}
+{:duration=>1.009825969, :skew=>0.01945768300000017, :count=>2, :avgskew=>0.009728841500000085}
+...
+{:duration=>1.00997368, :skew=>0.2896056629999997, :count=>29, :avgskew=>0.009986402172413781}
+{:duration=>1.010086027, :skew=>0.2996890480000012, :count=>30, :avgskew=>0.009989634933333373}
+```
+
+The above skews by 10ms per iteration, That's 100 times worse than my local
+'implementation #2' test that I ran on my laptop. Ouch! That's why it's so
+important to have an interval execution implementation that corrects for skew
+incurred by execution time and resource starvation.
