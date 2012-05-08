@@ -92,5 +92,5 @@ This is the first example where the 'skew' value isn't always increasing. In
 fact, it goes down sometimes. The total skew varies up and down around 0.00014
 seconds.
 
-While the skew is almost always around 130 microseconds, this may be the best
-we can do with Ruby.
+This is good because now we're actually maintaining our "every N seconds, run
+this thing" that follows the clock and ignores execution time.
