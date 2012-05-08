@@ -68,10 +68,10 @@ of iterations? Lots of skew!
 
 Code: [interval3.rb](https://github.com/jordansissel/software-patterns/blob/master/interval-execution/ruby/examples/interval3.rb)
 
-[interval3.rb] Ignores the runtime of the block and keeps incrementing the
-target clock by the given interval based on the start time. This assures that
-even if we do skew, we will correct for that skew, and execute at time T[0],
-T[n], T[2n], etc.
+This impementation ignores  the execution time of the block and keeps
+incrementing the target clock by the given interval based on the start time.
+This assures that even if we do skew, we will correct for that skew, and
+execute at time T[0], T[n], T[2n], etc.
 
 ```
 % ruby run.rb 3
