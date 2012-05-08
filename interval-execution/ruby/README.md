@@ -8,7 +8,7 @@ This is common for heartbeats, metric emission, etc.
 
 ### Naive implementation 
 
-[interval1.rb]
+Code: [interval1.rb](https://github.com/jordansissel/software-patterns/blob/master/interval-execution/ruby/examples/interval1.rb)
 
 This implementation unfortunately really says "After 'code' is done, sleep N
 seconds" which is not what we want. You get clock skew:
@@ -38,8 +38,11 @@ actually invokes the block every 1.1 seconds! Oops!
 
 ### Better implementation
 
-[interval2.rb] tracks the duration of the block call and tries to compensate by
-sleeping less. It sleeps the interval time minus the block call duration.
+Code: [interval2.rb](https://github.com/jordansissel/software-patterns/blob/master/interval-execution/ruby/examples/interval2.rb)
+
+This implementation tracks the duration of the block call and tries to
+compensate by sleeping less. It sleeps the interval time minus the block call
+duration.
 
 ```
 % ruby run.rb 2
@@ -63,9 +66,12 @@ of iterations? Lots of skew!
 
 ### Best? Implementation
 
+Code: [interval3.rb](https://github.com/jordansissel/software-patterns/blob/master/interval-execution/ruby/examples/interval3.rb)
+
 [interval3.rb] Ignores the runtime of the block and keeps incrementing the
-target clock by the given interval. This assures that even if we do skew, we
-will correct for that skew.
+target clock by the given interval based on the start time. This assures that
+even if we do skew, we will correct for that skew, and execute at time T[0],
+T[n], T[2n], etc.
 
 ```
 % ruby run.rb 3
