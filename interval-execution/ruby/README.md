@@ -94,3 +94,11 @@ seconds.
 
 This is good because now we're actually maintaining our "every N seconds, run
 this thing" that follows the clock and ignores execution time.
+
+This is not necessarily the best implementation, but it comes close. The next
+problem to focus on, possibly, is what correction should be made if the
+execution time is longer than the interval time; for example, if your interval
+is 1 second, but the execution takes 2.5 seconds, what do you do? 
+
+The above implementation solves this by resetting the clock and skipping sleep
+for the next turn.
