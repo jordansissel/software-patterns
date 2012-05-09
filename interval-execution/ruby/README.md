@@ -4,6 +4,12 @@ Goal: Run something every N seconds.
 
 This is common for heartbeats, metric emission, etc.
 
+Why is it important? I had 50 nodes heartbeating once per second, except I was using the 'implementation 2' method below, and it turned out I was only receiving 49.5 heartbeats per second. Here's a graph of before and after. Before was using implementation 2, after was using implementation 3.
+
+![before and after](https://github.com/jordansissel/software-patterns/raw/master/interval-execution/ruby/graph.png)
+
+The horizontal line in the graph is at 50, see the improvement? :)
+
 ## Implementations
 
 ### Naive implementation 
