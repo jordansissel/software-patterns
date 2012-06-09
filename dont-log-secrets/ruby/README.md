@@ -23,7 +23,7 @@ The goal is to prevent any unintentional access to the secret value. To that
 end, we want to make any intentional access quite explicit. In this case, you
 must call `Secret#value` in order to get the original value.
 
-See [secret.rb](???) for the class definition.
+See [secret1.rb](https://github.com/jordansissel/software-patterns/blob/master/dont-log-secrets/ruby/lib/secret1.rb for the class definition.
 
 This was written based on recognition that loggers, printing, and object
 inspection can often reveal internals of an object you would prefer
@@ -57,7 +57,7 @@ We'll need to fix this.
 
 Instead of using an instance variable, just define a method that returns the value.
 
-See [lib/secret2.rb]
+See [secret2.rb](https://github.com/jordansissel/software-patterns/blob/master/dont-log-secrets/ruby/lib/secret2.rb for the class definition.
 
 ```
 % ruby example2.rb
