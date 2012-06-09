@@ -79,3 +79,10 @@ The secret: my password
 Now above, you see all 3 cases the secret is hidden, but still accessible if I
 am explicit in asking for the secret value.
 
+
+## Why does this work?
+
+* When you use `puts some_object`  invokes 'some_object.to_s' to emit the value. 
+* When you use `p some_object` it invokes `some_object.inspect`
+* Tools like ruby's Logger and awesome_print inspect the object for instance
+  variables before emitting.
