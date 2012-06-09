@@ -7,6 +7,10 @@ Your 'User' model might have a password field, and you might just do this:
   logger.info(user)
 ```
 
+```
+I, [2012-06-08T18:11:03.393290 #1154]  INFO -- : #<User:0x00000001e1a518 @name="jordan", @password="my password">
+```
+
 Oops. You just leaked the password value if it is an instance variable.
 
 ## Goal
@@ -29,7 +33,10 @@ This was written based on recognition that loggers, printing, and object
 inspection can often reveal internals of an object you would prefer
 not having exposed.
 
-Example use:
+The code change required is that you wrap any secrets with a Secret class.
+You'll need to make any secret access explicit, calling secret.value, etc.
+
+Example results:
 
 ```
 #<User:0x000000009d4ae0 @name="jordan", @password=<secret>>
