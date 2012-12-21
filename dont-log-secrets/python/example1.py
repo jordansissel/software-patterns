@@ -3,8 +3,17 @@
 import json
 from json import JSONEncoder
 
+# Hide a secret value from loggers and json encoders.
+# This is to prevent accidental exposure of password fields.
+#
+# To get the value of this secret, call secret.value()
+# Otherwise, repr() and str() on these objects will return
+# simply "<secret>"
 class Secret(object):
   def __init__(self, value):
+    # Define a method to hide the value. This uses the
+    # technique described here:
+    # https://github.com/jordansissel/software-patterns/blob/master/dont-log-secrets/ruby/README.md#implementation-2-hiding-the-instance-variable
     def valuefunc():
       return value
     self.value = valuefunc
