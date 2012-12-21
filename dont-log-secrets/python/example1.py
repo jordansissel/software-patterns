@@ -43,7 +43,7 @@ params = {
 # this would be common if you get your params from wsgi, for example.
 params["password"] = Secret(params["password"])
 
-print params["password"]
-print repr(params["password"])
-print params["password"].value()
-print json.dumps(params, default=secretjson)
+print "str(): %s" % params["password"]
+print "repr(): %r" % repr(params["password"])
+print ".value(): %s" % params["password"].value()
+print "json.dumps(): %s" % json.dumps(params, default=secretjson)
