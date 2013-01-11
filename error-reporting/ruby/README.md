@@ -25,3 +25,4 @@ Preferrably presented in a way that is easily consumable.
 * user: identify the problem in a human-readable way, recommend a fix.
 
 TODO(sissel): implement exception-based errors for each type of audience.
+TODO(sissel): getrlimit CORE to see if we should dump stack/state?
