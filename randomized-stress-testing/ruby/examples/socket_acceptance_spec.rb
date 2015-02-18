@@ -46,25 +46,25 @@ describe "TCPServer+TCPSocket" do
   let(:text) { Randomized.text(1..10000) }
   subject { TCPIntegrationTestFactory.new(port) }
 
-  describe "using before/after and stress_it2" do
-    before do
-      begin
-        subject.setup
-      rescue Errno::EADDRINUSE
-        # We chose a random port that was already in use, let's skip this test.
-        skip("Port #{port} is in use by another process, skipping")
-      end
-    end
+  #describe "using before/after and stress_it2" do
+    #before do
+      #begin
+        #subject.setup
+      #rescue Errno::EADDRINUSE
+        ## We chose a random port that was already in use, let's skip this test.
+        #skip("Port #{port} is in use by another process, skipping")
+      #end
+    #end
 
-    after do
-      subject.teardown
-    end
+    #after do
+      #subject.teardown
+    #end
 
-    stress_it2 "should send data correctly" do
-      received = subject.send_and_receive(text)
-      expect(received).to(be == text)
-    end
-  end
+    #stress_it2 "should send data correctly" do
+      #received = subject.send_and_receive(text)
+      #expect(received).to(be == text)
+    #end
+  #end
   
   describe "using stress_it" do
     stress_it "should send data correctly" do

@@ -13,7 +13,6 @@ module RSpec::StressIt
   def stress_it(*args, &block)
     it(*args) do
       # Run the block of an example many times
-      # You can control the iteration count with `let(:stress_iterations) { ... }`
       Randomized.number(DEFAULT_ITERATIONS).times do |i|
         # Run the block within 'it' scope
         instance_eval(&block)
@@ -26,9 +25,15 @@ module RSpec::StressIt
     end # it ...
   end # def stress_it
 
+  # Generate a random number of copies of a given example.
+  # The idea is to take 1 `it` and run it N times to help tease out failures.
+  # Of course, the teasing requires you have randomized `let` usage, for example:
+  #
+  #     let(:number) { Randomized.number(0..200) }
+  #     it "should be less than 100" do
+  #       expect(number).to(be < 100)
+  #     end
   def stress_it2(example_name, *args, &block)
-    # Run the block of an example many times
-    # You can control the iteration count with `let(:stress_iterations) { ... }`
     Randomized.number(DEFAULT_ITERATIONS).times do |i|
       it(example_name + " [#{i}]", *args) do
         instance_eval(&block)
@@ -36,7 +41,21 @@ module RSpec::StressIt
     end # .times
   end 
 
-  def fuzz(name, variables, &block)
+  # Perform analysis on failure scenarios of a given example
+  #
+  # This will run the given example a random number of times and aggregate the
+  # results. If any failures occur, the spec will fail and a report will be
+  # given on that test.
+  #
+  # Example spec:
+  #
+  #     let(:number) { Randomized.number(0..200) }
+  #     fuzz "should be less than 100" do
+  #       expect(number).to(be < 100)
+  #     end
+  #
+  # Example report:
+  def analyze_it(name, variables, &block)
     it(name) do
       results = Hash.new { |h,k| h[k] = [] }
       iterations = Randomized.number(DEFAULT_ITERATIONS)
@@ -56,17 +75,17 @@ module RSpec::StressIt
       end
 
       if results[:success] != iterations
-        raise FuzzReport.new(results)
+        raise Analysis.new(results)
       end
     end
   end
 
-  class FuzzReport < StandardError
+  class Analysis < StandardError
     def initialize(results)
       @results = results
     end
 
-    def total_count
+    def total
       @results.reduce(0) { |m, (k,v)| m + v.length }
     end
 
@@ -78,15 +97,28 @@ module RSpec::StressIt
       end
     end
 
+    def percent(count)
+      return (count + 0.0) / total
+    end
+
+    def percent_s(count)
+      return sprintf("%.2f%%", percent(count) * 100)
+    end
+
     def to_s
-      percent = sprintf("%.2f%%",((success_count + 0.0) / total_count) * 100)
-      report = ["#{percent} tests successful"]
-      if total_count != success_count
-        report << "Report by failure:"
+      report = ["#{percent_s(success_count)} tests successful of #{total} tests"]
+      if success_count < total
+        report << "Failure analysis:"
         report += @results.sort_by { |k,v| v.length }.reject { |k,v| k == :success }.collect do |k, v|
-          sample = v.sample(10).collect { |v| v.first }.join(", ")
-          "[#{v.length}] #{k} - #{sample}"
-        end
+          sample = v.sample(5).collect { |v| v.first }.join(", ")
+          [ 
+            "  #{percent_s(v.length)} -> [#{v.length}] #{k}",
+            "    Sample exception:",
+            v.sample(1).first[1].to_s.gsub(/^/, "      "),
+            "    Samples causing #{k}:",
+            *v.sample(5).collect { |state, _exception| "      #{state}" }
+          ]
+        end.flatten
       end
       report.join("\n")
     end

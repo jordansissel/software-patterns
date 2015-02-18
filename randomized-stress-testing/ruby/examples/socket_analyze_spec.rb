@@ -13,7 +13,7 @@ describe TCPServer do
 
   context "on a random port" do
     let(:port) { Randomized.number(-100000..100000) }
-    fuzz "should bind successfully", [:port] do
+    analyze_it "should bind successfully", [:port] do
       socket.bind(sockaddr)
       expect(socket.local_address.ip_port).to(be == port)
     end
