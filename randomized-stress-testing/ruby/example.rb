@@ -53,31 +53,19 @@ describe "integration for TCPServer and TCPSocket" do
   subject(:server) { Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0) }
   subject(:client) { Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0) }
   let(:sockaddr) { Socket.sockaddr_in(port, "127.0.0.1") }
-  let(:ignore_eaddrinuse) do
-    proc do |m, *args|
-      begin
-        m.call(*args)
-      rescue Errno::EADDRINUSE
-        # ignore
-      end
-    end
-  end
-
   let(:text) { Randomized.text(1..10000) }
   let(:port) { Randomized.number(1024..65536) }
 
   after  do
     server.close
-    client.close
+    client.close unless client.closed?
   end
 
-  require "pry"
-  binding.pry
-  it "should pass text" do
+  stress_it "should pass text" do
     begin
       server.bind(sockaddr)
     rescue Errno::EADDRINUSE
-      next # Skip
+      next # Skip, we picked a port that's already in use
     end
     server.listen(5)
     client.connect(sockaddr)
