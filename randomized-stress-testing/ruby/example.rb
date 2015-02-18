@@ -1,6 +1,5 @@
 require "randomized"
 require "socket"
-
 require "rspec/stress_it"
 
 RSpec.configure do |c|
@@ -45,38 +44,6 @@ describe TCPServer do
     let(:port) { 0 }
     stress_it "should bind successfully" do
       expect { socket.bind(sockaddr) }.to_not(raise_error)
-    end
-  end
-end
-
-describe "integration for TCPServer and TCPSocket" do
-  subject(:server) { Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0) }
-  subject(:client) { Socket.new(Socket::AF_INET, Socket::SOCK_STREAM, 0) }
-  let(:sockaddr) { Socket.sockaddr_in(port, "127.0.0.1") }
-  let(:text) { Randomized.text(1..10000) }
-  let(:port) { Randomized.number(1024..65536) }
-
-  after  do
-    server.close
-    client.close unless client.closed?
-  end
-
-  stress_it "should pass text" do
-    begin
-      server.bind(sockaddr)
-    rescue Errno::EADDRINUSE
-      next # Skip, we picked a port that's already in use
-    end
-    server.listen(5)
-    client.connect(sockaddr)
-    s, _ = server.accept
-    begin
-      expect(client.syswrite(text)).to(be == text.bytesize)
-      client.close
-      data = s.read
-      expect(data).to(be == text)
-    ensure
-      s.close
     end
   end
 end
