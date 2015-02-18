@@ -109,7 +109,7 @@ module RSpec::StressIt
       report = ["#{percent_s(success_count)} tests successful of #{total} tests"]
       if success_count < total
         report << "Failure analysis:"
-        report += @results.sort_by { |k,v| v.length }.reject { |k,v| k == :success }.collect do |k, v|
+        report += @results.sort_by { |k,v| -v.length }.reject { |k,v| k == :success }.collect do |k, v|
           sample = v.sample(5).collect { |v| v.first }.join(", ")
           [ 
             "  #{percent_s(v.length)} -> [#{v.length}] #{k}",
