@@ -10,10 +10,11 @@ module RSpec::StressIt
   # of APIs to help find edge cases and weird behavior.
   #
   # The default number of iterations is randomly selected between 1 and 1000 inclusive
-  def stress_it(*args, &block)
-    it(*args) do
+  def stress_it(name, options={}, &block)
+    __iterations = Randomized.number(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
+    it(name, options) do
       # Run the block of an example many times
-      Randomized.number(DEFAULT_ITERATIONS).times do |i|
+      __iterations.times do |i|
         # Run the block within 'it' scope
         instance_eval(&block)
 
@@ -33,8 +34,9 @@ module RSpec::StressIt
   #     it "should be less than 100" do
   #       expect(number).to(be < 100)
   #     end
-  def stress_it2(example_name, *args, &block)
-    Randomized.number(DEFAULT_ITERATIONS).times do |i|
+  def stress_it2(name, options={}, &block)
+    __iterations = Randomized.number(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
+    __iterations.times do |i|
       it(example_name + " [#{i}]", *args) do
         instance_eval(&block)
       end # it ...
@@ -106,6 +108,7 @@ module RSpec::StressIt
     end
 
     def to_s
+      # This method is crazy complex for a formatter. Should refactor this significantly.
       report = ["#{percent_s(success_count)} tests successful of #{total} tests"]
       if success_count < total
         report << "Failure analysis:"
