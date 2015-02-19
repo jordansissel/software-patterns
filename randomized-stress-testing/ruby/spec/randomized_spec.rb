@@ -61,4 +61,35 @@ describe Randomized do
     end
   end
 
+  shared_examples_for "random numbers within a range" do
+    let(:start) { Randomized.integer(-100000 .. 100000) }
+    let(:length) { Randomized.integer(1 .. 100000) }
+    let(:range) { start .. (start + length) }
+
+    stress_it "should be a Numeric" do
+      expect(subject).to(be_a(Numeric))
+    end
+
+    stress_it "should be within the bounds of the given range" do
+      expect(range).to(include(subject))
+    end
+  end
+
+  describe "#integer" do
+    it_behaves_like "random numbers within a range" do
+      subject { Randomized.integer(range) }
+      stress_it "is a Fixnum" do
+        expect(subject).to(be_a(Fixnum))
+      end
+    end
+  end
+  describe "#number" do
+    it_behaves_like "random numbers within a range" do
+      subject { Randomized.number(range) }
+
+      stress_it "is a Float" do
+        expect(subject).to(be_a(Float))
+      end
+    end
+  end
 end 

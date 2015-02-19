@@ -11,10 +11,10 @@ module RSpec::StressIt
   #
   # The default number of iterations is randomly selected between 1 and 1000 inclusive
   def stress_it(name, options={}, &block)
-    __iterations = Randomized.number(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
+    __iterations = Randomized.iterations(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
     it(name, options) do
       # Run the block of an example many times
-      __iterations.times do |i|
+      __iterations.each do |i|
         # Run the block within 'it' scope
         instance_eval(&block)
 
@@ -35,8 +35,8 @@ module RSpec::StressIt
   #       expect(number).to(be < 100)
   #     end
   def stress_it2(name, options={}, &block)
-    __iterations = Randomized.number(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
-    __iterations.times do |i|
+    __iterations = Randomized.iterations(options.delete(:stress_iterations) || DEFAULT_ITERATIONS)
+    __iterations.each do |i|
       it(example_name + " [#{i}]", *args) do
         instance_eval(&block)
       end # it ...
@@ -60,8 +60,8 @@ module RSpec::StressIt
   def analyze_it(name, variables, &block)
     it(name) do
       results = Hash.new { |h,k| h[k] = [] }
-      iterations = Randomized.number(DEFAULT_ITERATIONS)
-      iterations.times do |i|
+      iterations = Randomized.iterations(DEFAULT_ITERATIONS)
+      iterations.each do |i|
         state = Hash[variables.collect { |l| [l, __send__(l)] }]
         begin
           instance_eval(&block)
